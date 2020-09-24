@@ -3,20 +3,18 @@ import { User } from "../../models";
 import bcrypt from "bcrypt";
 export default async (req, res) => {
   const { method } = req;
-  res.setHeader("Content-Type", "application/json");
 
   try {
     await connectToDatabase();
   } catch (e) {
-    res.statusCode = 500;
-    res.end(JSON.stringify({ error: e.message }));
+    res.status(500).json({ error: e.message });
   }
 
   switch (method) {
     case "GET": {
       const users = await User.find({}).lean();
-      res.statusCode = 200;
-      res.end(JSON.stringify({ users }));
+
+      res.status(200).json({ users });
       break;
     }
 
@@ -26,9 +24,9 @@ export default async (req, res) => {
       const existingUser = await User.findOne({ username });
       if (existingUser) {
         res.statusCode = 400;
-        res.end(
-          JSON.stringify({ error: "A user already exists with that username" })
-        );
+        res
+          .status(400)
+          .json({ error: "A user already exists with that username" });
         break;
       }
       const hashedPassword = await bcrypt.hash(
@@ -43,12 +41,12 @@ export default async (req, res) => {
 
       await user.save();
       res.statusCode = 201;
-      res.end(JSON.stringify({ user: "User Created" }));
+      res.status(201).json({ user: "User Created" });
       break;
     }
     default: {
       res.statusCode = 501;
-      res.end(JSON.stringify({ error: "Method not implemented" }));
+      res.status(501).json({ error: "Method not implemented" });
       break;
     }
   }

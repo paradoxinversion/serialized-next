@@ -3,13 +3,11 @@ import { Serial } from "../../models";
 import { kebabCase } from "lodash";
 export default async (req, res) => {
   const { method } = req;
-  res.setHeader("Content-Type", "application/json");
 
   try {
     await connectToDatabase();
   } catch (e) {
-    res.statusCode = 500;
-    res.end(JSON.stringify({ error: e.message }));
+    res.status(500).json({ error: e.message });
   }
 
   switch (method) {
@@ -24,7 +22,7 @@ export default async (req, res) => {
         serials = await Serial.find({ nsfw: false }).populate("author");
       }
       res.statusCode = 200;
-      res.end(JSON.stringify({ serials }));
+      res.status(200).json({ serials });
       break;
     }
 
@@ -43,12 +41,12 @@ export default async (req, res) => {
 
       await serial.save();
       res.statusCode = 201;
-      res.end(JSON.stringify({ serial }));
+      res.status(201).json({ serial });
       break;
     }
     default: {
       res.statusCode = 501;
-      res.end(JSON.stringify({ error: "Method not implemented" }));
+      res.status(501).json({ error: "Method not implemented" });
       break;
     }
   }

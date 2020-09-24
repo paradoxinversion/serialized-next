@@ -1,8 +1,6 @@
 import { connectToDatabase } from "../../../utils/mongodb";
 import { User } from "../../../models";
 export default async (req, res) => {
-  res.setHeader("Content-Type", "application/json");
-
   const {
     query: { id },
     method,
@@ -11,15 +9,13 @@ export default async (req, res) => {
   try {
     await connectToDatabase();
   } catch (e) {
-    res.statusCode = 500;
-    res.end(JSON.stringify({ error: e.message }));
+    res.status(500).json({ error: e.message });
   }
 
   switch (method) {
     case "GET": {
       const user = await User.findById(id).lean();
-      res.statusCode = 200;
-      res.end(JSON.stringify({ user }));
+      res.status(200).json({ user });
       break;
     }
 
@@ -29,20 +25,17 @@ export default async (req, res) => {
         new: true,
         lean: true,
       });
-      res.statusCode = 200;
-      res.end(JSON.stringify({ user }));
+      res.status(200).json({ user });
       break;
     }
 
     case "DELETE": {
       await User.findByIdAndDelete(id);
-      res.statusCode = 200;
-      res.end(JSON.stringify({ user: "User deleted" }));
+      res.status(200).json({ user: "User deleted" });
     }
 
     default: {
-      res.statusCode = 501;
-      res.end(JSON.stringify({ error: "Method not implemented" }));
+      res.status(501).json({ error: "Method not implemented" });
       break;
     }
   }

@@ -2,20 +2,17 @@ import { connectToDatabase } from "../../utils/mongodb";
 import { Genre } from "../../models";
 export default async (req, res) => {
   const { method } = req;
-  res.setHeader("Content-Type", "application/json");
 
   try {
     await connectToDatabase();
   } catch (e) {
-    res.statusCode = 500;
-    res.end(JSON.stringify({ error: e.message }));
+    res.status(500).json({ error: e.message });
   }
 
   switch (method) {
     case "GET": {
       const genres = await Genre.find({});
-      res.statusCode = 200;
-      res.end(JSON.stringify({ genres }));
+      res.status(200).json({ genres });
       break;
     }
 
@@ -25,13 +22,12 @@ export default async (req, res) => {
         name,
         description,
       });
-      res.statusCode = 201;
-      res.end(JSON.stringify({ genre }));
+      res.status(201).json({ genre });
       break;
     }
     default: {
       res.statusCode = 501;
-      res.end(JSON.stringify({ error: "Method not implemented" }));
+      res.status(501).json({ error: "Method not implemented" });
       break;
     }
   }
