@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-const bcrypt = require("bcrypt");
+import bcrypt from "bcryptjs";
 const UserSchema = new Schema({
   username: {
     type: String,
@@ -48,4 +48,4 @@ UserSchema.methods.validatePassword = async function (password) {
   }
 };
 
-export default mongoose.models.User || mongoose.model("User", UserSchema);
+export default mongoose.model("User") || mongoose.model("User", UserSchema);

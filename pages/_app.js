@@ -1,5 +1,5 @@
 import { Provider } from "next-auth/client";
-
+import "../styles/index.css";
 const App = ({ Component, pageProps }) => {
   const { session } = pageProps;
   return (

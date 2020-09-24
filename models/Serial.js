@@ -40,4 +40,5 @@ const SerialSchema = new Schema({
   },
 });
 
-export default mongoose.models.Serial || mongoose.model("Serial", SerialSchema);
+export default mongoose.model("Serial") ||
+  mongoose.model("Serial", SerialSchema);

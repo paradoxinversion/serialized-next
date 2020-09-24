@@ -7,7 +7,7 @@ function Layout({ children, userData }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [session, loading] = useSession();
   return (
-    <div className="flex flex-col h-screen max-h-screen box-border">
+    <div className="flex flex-col h-screen">
       <header className="bg-red-500 flex">
         <button
           onClick={(e) => {

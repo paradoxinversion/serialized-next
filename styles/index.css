@@ -1,0 +1,17 @@
+@tailwind base;
+
+@tailwind components;
+
+a {
+  @apply underline;
+}
+
+.btn {
+  @apply border p-2 rounded;
+}
+
+.btn-primary {
+  @apply bg-green-600 text-green-100;
+}
+
+@tailwind utilities;
