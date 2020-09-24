@@ -1,5 +1,5 @@
 import { connectToDatabase } from "../../utils/mongodb";
-import { User } from "../../utils/models";
+import { User } from "../../models";
 import bcrypt from "bcrypt";
 export default async (req, res) => {
   const { method } = req;

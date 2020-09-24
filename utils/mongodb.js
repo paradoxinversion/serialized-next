@@ -4,7 +4,7 @@
 
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
-import { User } from "./models";
+import { User } from "../models";
 
 const connection = {};
 

@@ -1,5 +1,5 @@
 import { connectToDatabase } from "../../utils/mongodb";
-import { Serial } from "../../utils/models";
+import { Serial } from "../../models";
 import { kebabCase } from "lodash";
 export default async (req, res) => {
   const { method } = req;

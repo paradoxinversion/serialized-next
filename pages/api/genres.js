@@ -1,5 +1,5 @@
 import { connectToDatabase } from "../../utils/mongodb";
-import { Genre } from "../../utils/models";
+import { Genre } from "../../models";
 export default async (req, res) => {
   const { method } = req;
   res.setHeader("Content-Type", "application/json");
