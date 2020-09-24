@@ -21,7 +21,6 @@ export default async (req, res) => {
       } else {
         serials = await Serial.find({ nsfw: false }).populate("author");
       }
-      res.statusCode = 200;
       res.status(200).json({ serials });
       break;
     }
@@ -40,12 +39,10 @@ export default async (req, res) => {
       });
 
       await serial.save();
-      res.statusCode = 201;
       res.status(201).json({ serial });
       break;
     }
     default: {
-      res.statusCode = 501;
       res.status(501).json({ error: "Method not implemented" });
       break;
     }
