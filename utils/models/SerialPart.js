@@ -43,10 +43,5 @@ const SerialPartSchema = new Schema({
   },
 });
 
-let SerialPart;
-try {
-  SerialPart = mongoose.model("SerialPart");
-} catch {
-  SerialPart = mongoose.model("SerialPart", SerialPartSchema);
-}
-export default SerialPart;
+export default mongoose.models.SerialPart ||
+  mongoose.model("SerialPart", SerialPartSchema);

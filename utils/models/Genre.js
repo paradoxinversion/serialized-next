@@ -1,4 +1,4 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { mongo, Schema } from "mongoose";
 /**
  * Defines serial story genres
  */
@@ -7,10 +7,4 @@ const GenreSchema = new Schema({
   description: { type: String },
 });
 
-let Genre;
-try {
-  Genre = mongoose.model("Genre");
-} catch {
-  Genre = mongoose.model("Genre", GenreSchema);
-}
-export default Genre;
+export default mongoose.models.Genre || mongoose.model("Genre", GenreSchema);

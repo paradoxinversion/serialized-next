@@ -6,18 +6,23 @@ import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import { User } from "./models";
 
+const connection = {};
+
 /**
  * Creates a connection to the database
  * @returns The mongoose database connection
  */
 export async function connectToDatabase() {
+  if (connection.isConnected) {
+    return;
+  }
   try {
-    const connection = await mongoose.connect(process.env.DATABASE_URI, {
+    const db = await mongoose.connect(process.env.DATABASE_URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
       serverSelectionTimeoutMS: 5000,
     });
-
+    connection.isConnected = db.connections[0].readyState;
     // Get or Create the default Administrator
     // Role 9 is the special default admin role
     let [admin] = await User.find({ role: 9 });
@@ -36,8 +41,8 @@ export async function connectToDatabase() {
       await admin.save();
     }
 
-    // We'll return the connection if it's successful.
-    return connection;
+    // We'll return the db if it's successful.
+    return db;
   } catch (e) {
     switch (e.name) {
       // Some very simple error handling-- Here we're just checking if the server can't be found

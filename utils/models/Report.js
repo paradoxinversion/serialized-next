@@ -10,10 +10,4 @@ const ReportSchema = new Schema({
   reportingUser: { type: Schema.Types.ObjectId, ref: "User", required: true },
 });
 
-let Report;
-try {
-  Report = mongoose.model("Report");
-} catch {
-  Report = mongoose.model("Report", ReportSchema);
-}
-export default Report;
+export default mongoose.models.Report || mongoose.model("Report", ReportSchema);

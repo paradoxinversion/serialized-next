@@ -6,10 +6,4 @@ const LikeSchema = new Schema({
   user: { type: Schema.Types.ObjectId, ref: "User" },
 });
 
-let Like;
-try {
-  Like = mongoose.model("Like");
-} catch {
-  Like = mongoose.model("Like", LikeSchema);
-}
-export default Like;
+export default mongoose.models.Like || mongoose.model("Like", LikeSchema);

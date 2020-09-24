@@ -48,10 +48,4 @@ UserSchema.methods.validatePassword = async function (password) {
   }
 };
 
-let User;
-try {
-  User = mongoose.model("User");
-} catch {
-  User = mongoose.model("User", UserSchema);
-}
-export default User;
+export default mongoose.models.User || mongoose.model("User", UserSchema);
