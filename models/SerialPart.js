@@ -14,7 +14,7 @@ const SerialPartSchema = new Schema({
   },
   creationDate: {
     type: Date,
-    required: true,
+    default: Date.now(),
   },
   lastModified: {
     type: Date,
