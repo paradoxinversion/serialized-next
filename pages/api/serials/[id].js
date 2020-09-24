@@ -1,5 +1,6 @@
 import { connectToDatabase } from "../../../utils/mongodb";
 import { Serial } from "../../../models";
+import { getSession } from "next-auth/client";
 export default async (req, res) => {
   const {
     query: { id },
@@ -11,7 +12,8 @@ export default async (req, res) => {
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
-
+  const session = await getSession({ req });
+  console.log(session);
   switch (method) {
     case "GET": {
       const serial = await Serial.findById(id).lean();
