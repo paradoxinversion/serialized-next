@@ -19,7 +19,17 @@ function Browse({ serials }) {
 }
 export async function getServerSideProps(context) {
   await connectToDatabase();
-  const serials = await Serial.find({}).populate("author").lean();
+  const serialsResult = await Serial.find({})
+    .select("id title genre synopsis author")
+    .populate("author", "username");
+  const serials = serialsResult.map((doc) => {
+    const serial = doc.toObject();
+    serial._id = serial._id.toString();
+    serial.genre = serial.genre.toString();
+    serial.author._id = serial.author._id.toString();
+    return serial;
+  });
+
   return {
     props: { serials }, // will be passed to the page component as props
   };

@@ -9,8 +9,10 @@
     "start": "next start"
   },
   "dependencies": {
+    "axios": "^0.20.0",
     "bcrypt": "^5.0.0",
     "bcryptjs": "^2.4.3",
+    "formik": "^2.1.5",
     "lodash": "^4.17.20",
     "mongoose": "^5.10.6",
     "next": "^9.5.3",
@@ -18,7 +20,9 @@
     "postcss-preset-env": "^6.7.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "tailwindcss": "^1.8.10"
+    "swr": "^0.3.4",
+    "tailwindcss": "^1.8.10",
+    "yup": "^0.29.3"
   },
   "devDependencies": {},
   "browser": {

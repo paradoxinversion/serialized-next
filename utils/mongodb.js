@@ -4,7 +4,7 @@
 
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
-import { User } from "../models";
+import { User, Genre } from "../models";
 
 const connection = {};
 
@@ -38,6 +38,12 @@ export async function connectToDatabase() {
         birthDate: 1 / 1 / 1900,
         role: 9,
       });
+
+      const tg = new Genre({
+        name: "Test Genre",
+        description: "A test genre.",
+      });
+      await tg.save();
       await admin.save();
     }
 

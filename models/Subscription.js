@@ -19,5 +19,11 @@ const SubscriptionSchema = new Schema({
   },
 });
 
-export default mongoose.model("Subscription") ||
-  mongoose.model("Subscription", SubscriptionSchema);
+let Subscription;
+
+try {
+  Subscription = mongoose.model("Subscription");
+} catch {
+  Subscription = mongoose.model("Subscription", SubscriptionSchema);
+}
+export default Subscription;

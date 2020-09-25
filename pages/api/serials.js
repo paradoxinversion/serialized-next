@@ -1,20 +1,26 @@
 import { connectToDatabase } from "../../utils/mongodb";
 import { Serial } from "../../models";
 import { kebabCase } from "lodash";
+import { getSession } from "next-auth/client";
 export default async (req, res) => {
-  const { method } = req;
-
+  const {
+    method,
+    query: { author },
+  } = req;
   try {
     await connectToDatabase();
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
-
+  const session = await getSession({ req });
+  console.log(session);
   switch (method) {
     case "GET": {
-      const includeNSFW = true;
-
       let serials;
+      if (author) {
+        serials = await Serial.find({ author }).populate("author");
+      }
+      const includeNSFW = true;
 
       if (includeNSFW) {
         serials = await Serial.find().populate("author");
@@ -27,14 +33,14 @@ export default async (req, res) => {
 
     case "POST": {
       // userid will come from an authenticated user in the future
-      const { title, synopsis, genre, nsfw, userId } = req.body.serial;
+      const { title, synopsis, genre, nsfw } = req.body.serial;
       const serial = new Serial({
         title,
         synopsis,
         genre,
         nsfw,
         creationDate: Date.now(),
-        author: userId,
+        author: session.user.id,
         slug: kebabCase(title),
       });
 

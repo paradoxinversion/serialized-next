@@ -7,4 +7,11 @@ const GenreSchema = new Schema({
   description: { type: String },
 });
 
-export default mongoose.model("Genre") || mongoose.model("Genre", GenreSchema);
+let Genre;
+
+try {
+  Genre = mongoose.model("Genre");
+} catch {
+  Genre = mongoose.model("Genre", GenreSchema);
+}
+export default Genre;
