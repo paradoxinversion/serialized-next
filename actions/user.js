@@ -2,6 +2,16 @@ import { User } from "../models";
 import { connectToDatabase } from "../utils/mongodb";
 import bcrypt from "bcryptjs";
 
+export const returnUser = async (userId) => {
+  try {
+    await connectToDatabase();
+    const user = await User.findById(userId).lean();
+    return user;
+  } catch (e) {
+    throw e;
+  }
+};
+
 export const getUsers = async () => {
   try {
     await connectToDatabase();
