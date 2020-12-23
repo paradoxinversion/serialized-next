@@ -1,7 +1,23 @@
 import { signin, signout, useSession } from "next-auth/client";
 import Link from "next/link";
 import Layout from "../components/layout";
+import useSWR from "swr";
+const fetcher = (query) =>
+  fetch("/api/graphql", {
+    method: "POST",
+    headers: {
+      "Content-type": "application/json",
+    },
+    body: JSON.stringify({ query }),
+  })
+    .then((res) => res.json())
+    .then((json) => json.data);
+
 export default function HomePage() {
+  const { data, error } = useSWR(
+    "{ users { username role biography } }",
+    fetcher
+  );
   return (
     <Layout>
       <img className="object-cover" src="https://picsum.photos/800/300" />
