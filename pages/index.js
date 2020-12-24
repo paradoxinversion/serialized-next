@@ -1,10 +1,11 @@
 import { signin, signout, useSession } from "next-auth/client";
 import Link from "next/link";
 import Layout from "../components/layout";
+import { Fragment } from "react";
 
 export default function HomePage() {
   return (
-    <Layout>
+    <Fragment>
       <img className="object-cover" src="https://picsum.photos/800/300" />
       <div className="m-4 text-center">
         <p className="text-lg font-bold">Lorem Ipsum</p>
@@ -25,6 +26,6 @@ export default function HomePage() {
           </Link>
         </div>
       </div>
-    </Layout>
+    </Fragment>
   );
 }

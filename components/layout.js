@@ -1,11 +1,45 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import PropTypes from "prop-types";
 import { useSession } from "next-auth/client";
+import Auth from "../hooks/containers/useAuthentication";
+import useSWR from "swr";
 
-function Layout({ children, userData }) {
+const fetcher = (query) =>
+  fetch("/api/graphql", {
+    method: "POST",
+    headers: {
+      "Content-type": "application/json",
+    },
+    body: JSON.stringify({ query }),
+    credentials: "include",
+  })
+    .then((res) => res.json())
+    .then((json) => json.data);
+function Layout({ children }) {
+  const UserData = Auth.useContainer();
+  const { data: authorizedUser } = useSWR(
+    `
+    { 
+      authorized{
+        _id
+        username
+        role
+        biography
+        viewNSFW
+      }
+    }
+  `,
+    fetcher
+  );
+
+  useEffect(() => {
+    authorizedUser
+      ? UserData.setUser(authorizedUser.authorized)
+      : UserData.setUser(null);
+  }, [authorizedUser]);
+
   const [menuOpen, setMenuOpen] = useState(false);
-  const [session, loading] = useSession();
   return (
     <div className="flex flex-col h-screen">
       <header className="bg-red-500 flex">
@@ -25,14 +59,14 @@ function Layout({ children, userData }) {
             <Link href="/">
               <a>Home</a>
             </Link>
-            {session && (
+            {UserData.user !== null && (
               <React.Fragment>
                 <Link href="/dashboard">
                   <a>Dashboard</a>
                 </Link>
                 <Link
                   href={`/users/[username]`}
-                  as={`/users/${session.user.username}`}
+                  as={`/users/${UserData.user.username}`}
                 >
                   <a>My Profile</a>
                 </Link>
@@ -51,13 +85,5 @@ function Layout({ children, userData }) {
     </div>
   );
 }
-
-Layout.propTypes = {
-  userData: PropTypes.shape({
-    role: PropTypes.string,
-    id: PropTypes.string,
-    username: PropTypes.string,
-  }),
-};
 
 export default Layout;

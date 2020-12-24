@@ -1,11 +1,12 @@
-import { Provider } from "next-auth/client";
+import Layout from "../components/layout";
 import Auth from "../hooks/containers/useAuthentication";
 import "../styles/index.css";
 const App = ({ Component, pageProps }) => {
-  const { session } = pageProps;
   return (
     <Auth.Provider>
-      <Component {...pageProps} />
+      <Layout>
+        <Component {...pageProps} />
+      </Layout>
     </Auth.Provider>
   );
 };

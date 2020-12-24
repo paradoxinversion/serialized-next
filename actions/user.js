@@ -11,7 +11,15 @@ export const returnUser = async (userId) => {
     throw e;
   }
 };
-
+export const getUserByUsername = async (username) => {
+  try {
+    await connectToDatabase();
+    const user = await User.findOne({ username }).select("-password").lean();
+    return user;
+  } catch (e) {
+    throw e;
+  }
+};
 export const getUsers = async () => {
   try {
     await connectToDatabase();

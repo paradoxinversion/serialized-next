@@ -1,13 +1,15 @@
 import { ApolloServer, gql } from "apollo-server-micro";
-import { getSerials, getUserSerials } from "../../actions/serial";
-import { getUsers, returnUser } from "../../actions/user";
+import { getSerial, getSerials, getUserSerials } from "../../actions/serial";
+import { getUsers, returnUser, getUserByUsername } from "../../actions/user";
 import jwt from "jsonwebtoken";
 import Cookies from "cookies";
 import { logIn } from "../../actions/authentication";
 const typeDefs = gql`
   type Query {
     users: [User!]!
+    user(username: String!): User
     serials: [Serial]
+    serial(authorUsername: String!, serialSlug: String!): Serial
     authorized: User
     ownSerials: [Serial]
   }
@@ -20,6 +22,7 @@ const typeDefs = gql`
     username: String
     role: Int
     biography: String
+    viewNSFW: Boolean
   }
 
   type Genre {
@@ -64,11 +67,17 @@ const resolvers = {
       }
       return await getUser(context.user.id);
     },
-    users(parent, args, context) {
-      return getUsers();
+    async users(parent, args, context) {
+      return await getUsers();
     },
-    serials(parent, args, context) {
-      return getSerials();
+    async user(parent, { username }, context) {
+      return await getUserByUsername(username);
+    },
+    async serials(parent, args, context) {
+      return await getSerials();
+    },
+    async serial(parent, { authorUsername, serialSlug }) {
+      return await getSerial(authorUsername, serialSlug);
     },
     async ownSerials(parent, args, context) {
       if (!context.user) {
@@ -89,7 +98,7 @@ const resolvers = {
         context.cookies.set("auth-token", token, {
           httpOnly: true,
           sameSite: "lax",
-          maxAge: 6 * 60 * 60,
+          maxAge: 600000 * 6 * 6, // in ms
           secure: process.env.NODE_ENV === "production",
         });
         return { user: loggedInUser.user, error: null };

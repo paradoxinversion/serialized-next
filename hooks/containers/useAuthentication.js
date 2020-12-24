@@ -3,7 +3,12 @@ import { useState } from "react";
 
 function useAuthentication() {
   const [user, setUser] = useState(null);
-  return { user, setUser: (user) => setUser(user) };
+  return {
+    user,
+    setUser: (user) => {
+      setUser(user);
+    },
+  };
 }
 
 let Auth = createContainer(useAuthentication);

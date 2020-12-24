@@ -1,6 +1,8 @@
 import { Formik, Field, Form } from "formik";
 import useSWR from "swr";
+import { useRouter } from "next/router";
 import axios from "axios";
+import Auth from "../hooks/containers/useAuthentication";
 const fetcher = (query) =>
   fetch("/api/graphql", {
     method: "POST",
@@ -13,16 +15,8 @@ const fetcher = (query) =>
     .then((json) => json.data);
 
 export default function LogIn() {
-  const { data, error } = useSWR(
-    `
-    { 
-      authorized{
-        username
-      }
-    }
-  `,
-    fetcher
-  );
+  const router = useRouter();
+  const UserData = Auth.useContainer();
   return (
     <div>
       <h1>Log In</h1>
@@ -37,7 +31,11 @@ export default function LogIn() {
             query: `mutation($username: String!, $password: String!){
               login(username: $username, password: $password){
                 user {
+                  _id
                   username
+                  role
+                  biography
+                  viewNSFW
                 }
                 error
               }    
@@ -48,7 +46,17 @@ export default function LogIn() {
               password: values.password,
             },
           });
-          console.log(result);
+          const { error, user } = result.data.data.login;
+          if (error) {
+            console.log(error);
+            return;
+          }
+          if (user === null) {
+            console.log("No user returned from Login!");
+          }
+
+          UserData.setUser(user);
+          router.push("/dashboard");
         }}
       >
         <Form>

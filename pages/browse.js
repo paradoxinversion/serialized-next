@@ -1,6 +1,7 @@
 import Layout from "../components/layout";
 import SerialBrief from "../components/SerialBrief";
 import useSWR from "swr";
+import { Fragment } from "react";
 
 const fetcher = (query) =>
   fetch("/api/graphql", {
@@ -25,14 +26,15 @@ function Browse() {
       }
       author {
         username
-      } 
+      }
+      slug
     } 
   }`,
     fetcher
   );
 
   return (
-    <Layout>
+    <Fragment>
       <p className="text-lg font-bold m-4">Browse</p>
       {data && (
         <div id="serials">
@@ -41,7 +43,7 @@ function Browse() {
           ))}
         </div>
       )}
-    </Layout>
+    </Fragment>
   );
 }
 
