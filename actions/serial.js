@@ -16,7 +16,6 @@ export const getSerial = async (authorUsername, serialSlug) => {
       .populate("author", "username")
       .populate("genre", "name")
       .lean();
-    console.log("Got", serial);
     return serial;
   } catch (e) {
     throw e;
@@ -38,16 +37,23 @@ export const getSerials = async () => {
 };
 
 export const getUserSerials = async (userId) => {
-  console.log(userId);
   try {
     await connectToDatabase();
     const serials = await Serial.find({})
       .populate("author", "username")
       .populate("genre", "name")
       .lean();
-    console.log(serials);
     return serials;
   } catch (e) {
     throw e;
   }
+};
+
+export const createSerial = async ({ title, synopsis, genre, nsfw }) => {
+  const newSerial = new Serial({
+    title,
+    synopsis: synopsis || "",
+    genre,
+    nsfw,
+  });
 };

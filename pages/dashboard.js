@@ -1,9 +1,4 @@
-import Layout from "../components/layout";
-import { getSession, useSession, signin } from "next-auth/client";
-import { connectToDatabase } from "../utils/mongodb";
-import { Serial } from "../models";
 import useSWR from "swr";
-import axios from "axios";
 import { useEffect, useState } from "react";
 import SerialBrief from "../components/SerialBrief";
 import Auth from "../hooks/containers/useAuthentication";
@@ -20,6 +15,7 @@ const fetcher = (query) =>
   })
     .then((res) => res.json())
     .then((json) => json.data);
+
 export default function Dashboard() {
   const UserData = Auth.useContainer();
 
@@ -53,7 +49,6 @@ export default function Dashboard() {
         <a className="btn">Log In</a>
       </Link>
     );
-  if (!UserData.user) return <div>Loading User</div>;
   return (
     <div id="dashboard" className="m-4">
       <p className="text-center mb-4">
@@ -65,8 +60,7 @@ export default function Dashboard() {
       <div id="your-serials">
         <p
           className="bg-gray-500 hover:bg-red-400"
-          onClick={() => setShowOwnSerials(!showOwnSerials)}
-        >
+          onClick={() => setShowOwnSerials(!showOwnSerials)}>
           Your Serials &nbsp;&nbsp; {showOwnSerials ? "-" : "+"}
         </p>
         {showOwnSerials &&
@@ -78,8 +72,7 @@ export default function Dashboard() {
       <div id="subsribed-serial-parts">
         <p
           className="bg-gray-500 hover:bg-red-400"
-          onClick={() => setShowSubscriptions(!showSubscriptions)}
-        >
+          onClick={() => setShowSubscriptions(!showSubscriptions)}>
           Your subscriptions &nbsp;&nbsp; {showSubscriptions ? "-" : "+"}
         </p>
         {/* {showSubscriptions && <SerialPartBrief />} */}

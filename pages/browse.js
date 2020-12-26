@@ -17,19 +17,19 @@ const fetcher = (query) =>
 function Browse() {
   const { data, error } = useSWR(
     `{ 
-    serials { 
-      id
-      title 
-      synopsis 
-      genre {
-        name
-      }
-      author {
-        username
-      }
-      slug
-    } 
-  }`,
+      serials { 
+        id
+        title 
+        synopsis 
+        genre {
+          name
+        }
+        author {
+          username
+        }
+        slug
+      } 
+    }`,
     fetcher
   );
 

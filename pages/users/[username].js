@@ -11,6 +11,7 @@ const fetcher = (query) =>
   })
     .then((res) => res.json())
     .then((json) => json.data);
+
 export default function UserProfile() {
   const router = useRouter();
   const { username } = router.query;

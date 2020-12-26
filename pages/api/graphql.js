@@ -1,9 +1,16 @@
 import { ApolloServer, gql } from "apollo-server-micro";
-import { getSerial, getSerials, getUserSerials } from "../../actions/serial";
+import {
+  getSerial,
+  getSerials,
+  getUserSerials,
+  createSerial,
+} from "../../actions/serial";
 import { getUsers, returnUser, getUserByUsername } from "../../actions/user";
 import jwt from "jsonwebtoken";
 import Cookies from "cookies";
 import { logIn } from "../../actions/authentication";
+import { Genre, User } from "../../models";
+import { getGenres } from "../../actions/genre";
 const typeDefs = gql`
   type Query {
     users: [User!]!
@@ -12,10 +19,17 @@ const typeDefs = gql`
     serial(authorUsername: String!, serialSlug: String!): Serial
     authorized: User
     ownSerials: [Serial]
+    genres: [Genre]
   }
 
   type Mutation {
     login(username: String!, password: String!): LoginResult
+    createSerial(
+      title: String!
+      synopsis: String
+      genre: String!
+      nsfw: Boolean!
+    ): Serial
   }
   type User {
     _id: String
@@ -26,6 +40,7 @@ const typeDefs = gql`
   }
 
   type Genre {
+    _id: String
     name: String
     description: String
   }
@@ -85,6 +100,9 @@ const resolvers = {
       }
       return await getUserSerials(context.user.id);
     },
+    async genres(parent, args, context) {
+      return await getGenres();
+    },
   },
   Mutation: {
     async login(parent, { username, password }, context) {
@@ -105,6 +123,12 @@ const resolvers = {
       } else {
         return { user: null, error: loggedInUser.error };
       }
+    },
+    async createSerial(parent, { title, synopsis, genre, nsfw }) {
+      // const loggedInUser = await User.findById(context.user)
+      // return await createSerial({title, synopsis, genre, nsfw})
+      console.log(context.user);
+      return null;
     },
   },
 };

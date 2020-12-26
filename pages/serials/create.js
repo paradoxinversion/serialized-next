@@ -1,34 +1,63 @@
-import { signin, useSession } from "next-auth/client";
 import Layout from "../../components/layout";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import axios from "axios";
 import useSWR from "swr";
 import GenericSelect from "../../components/customFields/Select";
+import Auth from "../../hooks/containers/useAuthentication";
+import Link from "next/link";
+import { Fragment } from "react";
 
-const fetcher = (url) => axios.get(url).then((res) => res.data);
+const fetcher = (query) =>
+  fetch("/api/graphql", {
+    method: "POST",
+    headers: {
+      "Content-type": "application/json",
+    },
+    body: JSON.stringify({ query }),
+    credentials: "include",
+  })
+    .then((res) => res.json())
+    .then((json) => json.data);
 
 export default function CreateSerial() {
-  const { data, error } = useSWR("/api/genres", fetcher);
+  const UserData = Auth.useContainer();
+  const { data, error } = useSWR(
+    `
+      { 
+        genres{
+          _id
+          name
+          description
+        }
+      }
+    `,
+    fetcher
+  );
 
-  const [session, loading] = useSession();
-
-  if (typeof window !== "undefined" && loading) return null;
-
-  if (!session) return <button onClick={signin}>Sign In</button>;
+  if (!UserData.user)
+    return (
+      <Link href="/login">
+        <a className="btn">Log In</a>
+      </Link>
+    );
   if (!data.genres) return <p>Loading</p>;
   return (
-    <Layout>
+    <Fragment>
       <header>Create a new serial</header>
       <Formik
         initialValues={{ title: "", synopsis: "", genre: "", nsfw: false }}
         onSubmit={async (values, { setSubmitting }) => {
-          const newSerialResponse = await axios.post("/api/serials", {
-            serial: values,
+          const { title, synopsis, genre, nsfw } = values;
+          const createSerialResponse = await axios.post("/api/graphql", {
+            query: `
+              createSerial(title: ${title}, synopsis: ${synopsis}, genre: ${genre}, nsfw: ${nsfw}){
+                serial{
+                  _id
+                }
+              }    
+            `,
           });
-
-          debugger;
-        }}
-      >
+        }}>
         {({ isSubmitting }) => (
           <Form className="">
             <label className="block">Title</label>
@@ -49,6 +78,6 @@ export default function CreateSerial() {
           </Form>
         )}
       </Formik>
-    </Layout>
+    </Fragment>
   );
 }
