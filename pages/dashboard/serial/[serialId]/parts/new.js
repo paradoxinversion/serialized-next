@@ -1,29 +1,21 @@
 import { useRouter } from "next/router";
 import { Fragment } from "react";
-import useSWR from "swr";
 import { Form, Formik, Field, ErrorMessage } from "formik";
 import axios from "axios";
-import Auth from "../../../../hooks/containers/useAuthentication";
-import fetcher from "../../../../utils/fetcher";
+import Auth from "../../../../../hooks/containers/useAuthentication";
+import Link from "next/link";
 
 export default function SerialPartCreate() {
   const router = useRouter();
   const userData = Auth.useContainer();
-  const { author, serialSlug } = router.query;
+  const { serialId } = router.query;
 
-  const { data: serialData } = useSWR(
-    `
-    { 
-      serial(authorUsername: "${author}", serialSlug: "${serialSlug}"){
-        _id
-        slug
-      }
-    }
-  `,
-    fetcher
-  );
-
-  if (!serialData) return <div>Loading</div>;
+  if (!userData.user)
+    return (
+      <Link href="/login">
+        <a className="btn">Log In</a>
+      </Link>
+    );
   return (
     <Fragment>
       <Formik
@@ -43,7 +35,7 @@ export default function SerialPartCreate() {
             }
             `,
             variables: {
-              parentSerial: serialData.serial._id,
+              parentSerial: serialId,
               title,
               synopsis,
               content,
@@ -51,9 +43,7 @@ export default function SerialPartCreate() {
             },
           });
 
-          router.push(
-            `/serials/${userData.user.username}/${serialData.serial.slug}`
-          );
+          router.push(`/dashboard/serial/${serialId}`);
         }}
       >
         {({ isSubmitting }) => (

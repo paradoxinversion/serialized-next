@@ -23,7 +23,18 @@ export const getSerial = async (authorUsername, serialSlug) => {
     throw e;
   }
 };
-
+export const getSerialById = async (serialId) => {
+  try {
+    await connectToDatabase();
+    const serial = await Serial.findById(serialId)
+      .populate("author", "username")
+      .populate("genre", "name id")
+      .lean();
+    return serial;
+  } catch (e) {
+    throw e;
+  }
+};
 export const getSerials = async () => {
   try {
     await connectToDatabase();

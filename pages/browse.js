@@ -1,4 +1,3 @@
-import Layout from "../components/layout";
 import SerialBrief from "../components/SerialBrief";
 import useSWR from "swr";
 import { Fragment } from "react";

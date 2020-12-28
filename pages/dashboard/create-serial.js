@@ -54,9 +54,7 @@ export default function CreateSerial() {
             },
           });
           console.log(createSerialResponse);
-          router.push(
-            `/serials/${UserData.user.username}/${createSerialResponse.data.data.createSerial.slug}`
-          );
+          router.push(`/dashboard`);
         }}
       >
         {({ isSubmitting }) => (
@@ -80,6 +78,10 @@ export default function CreateSerial() {
             <button type="submit" disabled={isSubmitting}>
               Submit
             </button>
+
+            <Link href="/dashboard">
+              <a className="btn">Back</a>
+            </Link>
           </Form>
         )}
       </Formik>

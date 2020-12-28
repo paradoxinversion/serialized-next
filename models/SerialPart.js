@@ -44,7 +44,9 @@ const SerialPartSchema = new Schema({
 });
 
 let SerialPart;
-
+SerialPartSchema.methods.isAuthor = async function (authorId) {
+  return authorId === this.author;
+};
 try {
   SerialPart = mongoose.model("SerialPart");
 } catch {

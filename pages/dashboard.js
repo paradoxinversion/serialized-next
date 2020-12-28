@@ -48,7 +48,7 @@ export default function Dashboard() {
       <Link href={`/users/[username]`} as={`/users/${UserData.user.username}`}>
         <a>My Profile</a>
       </Link>
-      <Link href={`/serials/create`}>
+      <Link href={`/dashboard/create-serial`}>
         <a>New Serial</a>
       </Link>
       <div id="your-serials">
@@ -71,8 +71,15 @@ export default function Dashboard() {
                 <div className="flex space-between space-x-4">
                   <Link
                     className="btn"
-                    href={"/serials/[author]/[serialSlug]"}
-                    as={`/serials/${UserData.user.username}/${slug}`}
+                    href={"/dashboard/serial/[serialId]"}
+                    as={`/dashboard/serial/${serial._id}`}
+                  >
+                    Go
+                  </Link>
+                  <Link
+                    className="btn"
+                    href={"/dashboard/serial/[serialId]/edit"}
+                    as={`/dashboard/serial/${serial._id}/edit`}
                   >
                     Edit
                   </Link>

@@ -8,14 +8,21 @@ import {
   createSerial,
   editserial,
   deleteSerial,
+  getSerialById,
 } from "../../actions/serial";
 import { getUsers, returnUser, getUserByUsername } from "../../actions/user";
 import jwt from "jsonwebtoken";
 import Cookies from "cookies";
 import { logIn, register } from "../../actions/authentication";
 import { getGenres } from "../../actions/genre";
-import { createSerialPart, getSerialParts } from "../../actions/serialPart";
-import { Serial } from "../../models";
+import {
+  createSerialPart,
+  getSerialPartById,
+  getSerialParts,
+  updateSerialPart,
+  deleteSerialPart as removeSerialPart,
+} from "../../actions/serialPart";
+import { Serial, SerialPart } from "../../models";
 const typeDefs = gql`
   scalar Date
 
@@ -24,7 +31,9 @@ const typeDefs = gql`
     user(username: String!): User
     serials: [Serial]
     serial(authorUsername: String!, serialSlug: String!): Serial
+    serialById(serialId: String!): Serial
     serialParts(parentSerial: String!): [SerialPart]
+    serialPartById(serialPartId: String!): SerialPart
     authorized: User
     ownSerials: [Serial]
     genres: [Genre]
@@ -62,6 +71,15 @@ const typeDefs = gql`
     ): SerialPart
 
     deleteSerial(serialId: String!): DeleteSerialResult
+
+    editSerialPart(
+      serialPartId: String!
+      title: String
+      synopsis: String
+      content: String
+    ): SerialPart
+
+    deleteSerialPart(serialPartId: String!): Deletion
   }
   type User {
     _id: String
@@ -110,6 +128,10 @@ const typeDefs = gql`
 
   type DeleteSerialResult {
     deletedSerial: Serial
+    error: String
+  }
+  type Deletion {
+    resourceName: String
     error: String
   }
 `;
@@ -166,11 +188,17 @@ const resolvers = {
     async serial(parent, { authorUsername, serialSlug }) {
       return await getSerial(authorUsername, serialSlug);
     },
+    async serialById(parent, { serialId }, context) {
+      return await getSerialById(serialId);
+    },
     async ownSerials(parent, args, context) {
       if (!context.user) {
         return null;
       }
       return await getUserSerials(context.user.id);
+    },
+    async serialPartById(parent, { serialPartId }, context) {
+      return await getSerialPartById(serialPartId);
     },
     async genres(parent, args, context) {
       return await getGenres();
@@ -280,6 +308,60 @@ const resolvers = {
         return {
           deletedSerial: null,
           error: "user is not author",
+        };
+      }
+    },
+    async editSerialPart(
+      parent,
+      { serialPartId, title, synopsis, content },
+      context
+    ) {
+      const userId = context.user.id;
+      if (userId) {
+        const serialPart = await SerialPart.findById(serialPartId);
+        if (serialPart) {
+          const userIsAuthor = serialPart.isAuthor(userId);
+          if (userIsAuthor) {
+            const edit = await updateSerialPart({
+              serialPartId,
+              title,
+              synopsis,
+              content,
+            });
+            return edit;
+          }
+        } else {
+          return null;
+        }
+      } else {
+        return {
+          deletedSerial: null,
+          error: "user is not author",
+        };
+      }
+    },
+    async deleteSerialPart(parent, { serialPartId }, context) {
+      const userId = context.user.id;
+      if (userId) {
+        const serialPart = await SerialPart.findById(serialPartId);
+        if (serialPart) {
+          const userIsAuthor = serialPart.isAuthor(userId);
+          if (userIsAuthor) {
+            const deletion = await removeSerialPart(serialPartId);
+            return { resourceName: deletion.title, error: null };
+          } else {
+            return {
+              resorceName: null,
+              error: "Unauthorized action, user is not author.",
+            };
+          }
+        } else {
+          return { resorceName: null, error: "Serial Part Not Found" };
+        }
+      } else {
+        return {
+          deletedSerial: null,
+          error: "user is not logged in",
         };
       }
     },
