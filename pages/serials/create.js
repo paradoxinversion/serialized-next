@@ -1,4 +1,3 @@
-import Layout from "../../components/layout";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import axios from "axios";
 import useSWR from "swr";
@@ -7,18 +6,7 @@ import Auth from "../../hooks/containers/useAuthentication";
 import Link from "next/link";
 import { Fragment } from "react";
 import { useRouter } from "next/router";
-
-const fetcher = (query) =>
-  fetch("/api/graphql", {
-    method: "POST",
-    headers: {
-      "Content-type": "application/json",
-    },
-    body: JSON.stringify({ query }),
-    credentials: "include",
-  })
-    .then((res) => res.json())
-    .then((json) => json.data);
+import fetcher from "../../utils/fetcher";
 
 export default function CreateSerial() {
   const UserData = Auth.useContainer();

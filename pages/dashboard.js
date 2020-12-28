@@ -1,20 +1,9 @@
-import useSWR, { mutate } from "swr";
+import useSWR from "swr";
 import { useEffect, useState } from "react";
-import SerialBrief from "../components/SerialBrief";
 import Auth from "../hooks/containers/useAuthentication";
 import Link from "next/link";
 import axios from "axios";
-const fetcher = (query) =>
-  fetch("/api/graphql", {
-    method: "POST",
-    headers: {
-      "Content-type": "application/json",
-    },
-    body: JSON.stringify({ query }),
-    credentials: "include",
-  })
-    .then((res) => res.json())
-    .then((json) => json.data);
+import fetcher from "../utils/fetcher";
 
 export default function Dashboard() {
   const UserData = Auth.useContainer();

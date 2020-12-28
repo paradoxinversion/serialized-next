@@ -1,16 +1,6 @@
 import useSWR from "swr";
 import { useRouter } from "next/router";
-const fetcher = (query) =>
-  fetch("/api/graphql", {
-    method: "POST",
-    headers: {
-      "Content-type": "application/json",
-    },
-    body: JSON.stringify({ query }),
-    credentials: "include",
-  })
-    .then((res) => res.json())
-    .then((json) => json.data);
+import fetcher from "../../utils/fetcher";
 
 export default function UserProfile() {
   const router = useRouter();

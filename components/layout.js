@@ -1,21 +1,10 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import PropTypes from "prop-types";
-import { useSession } from "next-auth/client";
 import Auth from "../hooks/containers/useAuthentication";
 import useSWR from "swr";
+import fetcher from "../utils/fetcher";
 
-const fetcher = (query) =>
-  fetch("/api/graphql", {
-    method: "POST",
-    headers: {
-      "Content-type": "application/json",
-    },
-    body: JSON.stringify({ query }),
-    credentials: "include",
-  })
-    .then((res) => res.json())
-    .then((json) => json.data);
 function Layout({ children }) {
   const UserData = Auth.useContainer();
   const { data: authorizedUser } = useSWR(

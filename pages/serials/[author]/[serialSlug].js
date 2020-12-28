@@ -3,18 +3,7 @@ import { Fragment } from "react";
 import useSWR from "swr";
 import Link from "next/link";
 import Auth from "../../../hooks/containers/useAuthentication";
-
-const fetcher = (query) =>
-  fetch("/api/graphql", {
-    method: "POST",
-    headers: {
-      "Content-type": "application/json",
-    },
-    body: JSON.stringify({ query }),
-    credentials: "include",
-  })
-    .then((res) => res.json())
-    .then((json) => json.data);
+import fetcher from "../../../utils/fetcher";
 
 export default function SerialOverview() {
   const router = useRouter();

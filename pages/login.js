@@ -1,18 +1,7 @@
 import { Formik, Field, Form } from "formik";
-import useSWR from "swr";
 import { useRouter } from "next/router";
 import axios from "axios";
 import Auth from "../hooks/containers/useAuthentication";
-const fetcher = (query) =>
-  fetch("/api/graphql", {
-    method: "POST",
-    headers: {
-      "Content-type": "application/json",
-    },
-    body: JSON.stringify({ query }),
-  })
-    .then((res) => res.json())
-    .then((json) => json.data);
 
 export default function LogIn() {
   const router = useRouter();

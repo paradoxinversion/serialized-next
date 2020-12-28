@@ -2,17 +2,7 @@ import Layout from "../components/layout";
 import SerialBrief from "../components/SerialBrief";
 import useSWR from "swr";
 import { Fragment } from "react";
-
-const fetcher = (query) =>
-  fetch("/api/graphql", {
-    method: "POST",
-    headers: {
-      "Content-type": "application/json",
-    },
-    body: JSON.stringify({ query }),
-  })
-    .then((res) => res.json())
-    .then((json) => json.data);
+import fetcher from "../utils/fetcher";
 
 function Browse() {
   const { data, error } = useSWR(
