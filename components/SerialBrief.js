@@ -30,7 +30,13 @@ function SerialBrief(props) {
       </div>
       {props.controls && (
         <div className="flex space-between space-x-4">
-          <button className="btn ">Edit</button>
+          <Link
+            className="btn"
+            href={"/serials/[author]/[serialSlug]"}
+            as={`/serials/${author.username}/${slug}`}
+          >
+            Edit
+          </Link>
           <button className="btn">Delete</button>
           <button className="btn">Up</button>
           <button className="btn">Down</button>

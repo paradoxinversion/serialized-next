@@ -1,13 +1,10 @@
-import Layout from "../../components/layout";
-import { Formik, Form, Field, ErrorMessage } from "formik";
-import axios from "axios";
-import useSWR from "swr";
-import GenericSelect from "../../components/customFields/Select";
-import Auth from "../../hooks/containers/useAuthentication";
-import Link from "next/link";
-import { Fragment } from "react";
 import { useRouter } from "next/router";
-
+import { Fragment } from "react";
+import useSWR from "swr";
+import Link from "next/link";
+import { Form, Formik, Field, ErrorMessage } from "formik";
+import GenericSelect from "../../../../components/customFields/Select";
+import axios from "axios";
 const fetcher = (query) =>
   fetch("/api/graphql", {
     method: "POST",
@@ -20,10 +17,30 @@ const fetcher = (query) =>
     .then((res) => res.json())
     .then((json) => json.data);
 
-export default function CreateSerial() {
-  const UserData = Auth.useContainer();
+export default function SerialEdit() {
   const router = useRouter();
+  const { author, serialSlug } = router.query;
 
+  const { data: serialData } = useSWR(
+    `
+    { 
+      serial(authorUsername: "${author}", serialSlug: "${serialSlug}"){
+        _id
+        nsfw
+        title
+        synopsis
+        genre{
+          _id
+          name
+        }
+        author{
+          username
+        }
+      }
+    }
+  `,
+    fetcher
+  );
   const { data: genreData, error } = useSWR(
     `
       { 
@@ -36,43 +53,39 @@ export default function CreateSerial() {
     `,
     fetcher
   );
-
-  if (!UserData.user)
-    return (
-      <Link href="/login">
-        <a className="btn">Log In</a>
-      </Link>
-    );
-  if (!genreData?.genres) return <p>Loading</p>;
+  if (!serialData || !genreData) return <div>Loading</div>;
   return (
     <Fragment>
-      <header>Create a new serial</header>
       <Formik
-        initialValues={{ title: "", synopsis: "", genre: "", nsfw: false }}
+        initialValues={{
+          title: serialData.serial.title,
+          synopsis: serialData.serial.synopsis,
+          genre: serialData.serial.genre._id,
+          nsfw: serialData.serial.nsfw,
+          serialId: serialData.serial._id,
+        }}
         onSubmit={async (values, { setSubmitting }) => {
-          const { title, synopsis, genre, nsfw } = values;
-          const createSerialResponse = await axios.post("/api/graphql", {
-            query: `mutation($title: String!, $synopsis: String, $genre: String!, $nsfw: Boolean!){
-              createSerial(title: $title, synopsis: $synopsis, genre: $genre, nsfw: $nsfw){
-               slug
+          const { title, synopsis, genre, nsfw, serialId } = values;
+          const editSerial = await axios.post("/api/graphql", {
+            query: `mutation($serialId: String!, $title: String!, $synopsis: String, $genre: String!, $nsfw: Boolean!){
+              editSerial(serialId: $serialId, title: $title, synopsis: $synopsis, genre: $genre, nsfw: $nsfw){
+               _id
+               title
               }    
             }
             `,
             variables: {
+              serialId,
               title,
               synopsis,
               genre,
               nsfw,
             },
           });
-          console.log(createSerialResponse);
-          router.push(
-            `/serials/${UserData.user.username}/${createSerialResponse.data.data.createSerial.slug}`
-          );
         }}
       >
         {({ isSubmitting }) => (
-          <Form className="">
+          <Form>
             <label className="block">Title</label>
             <Field className="border rounded" type="text" name="title" />
             <ErrorMessage name="title" component="div" />

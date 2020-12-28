@@ -18,7 +18,7 @@ function Browse() {
   const { data, error } = useSWR(
     `{ 
       serials { 
-        id
+        _id
         title 
         synopsis 
         genre {

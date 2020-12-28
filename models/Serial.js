@@ -23,7 +23,7 @@ const SerialSchema = new Schema({
   },
   creationDate: {
     type: Date,
-    required: Date.now(),
+    default: Date.now(),
   },
   lastModified: {
     type: Date,
@@ -39,7 +39,9 @@ const SerialSchema = new Schema({
     required: true,
   },
 });
-
+SerialSchema.methods.isAuthor = async function (authorId) {
+  return authorId === this.author;
+};
 let Serial;
 
 try {

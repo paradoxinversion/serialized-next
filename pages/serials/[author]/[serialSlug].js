@@ -2,6 +2,7 @@ import { useRouter } from "next/router";
 import { Fragment } from "react";
 import useSWR from "swr";
 import Link from "next/link";
+import Auth from "../../../hooks/containers/useAuthentication";
 
 const fetcher = (query) =>
   fetch("/api/graphql", {
@@ -17,17 +18,36 @@ const fetcher = (query) =>
 
 export default function SerialOverview() {
   const router = useRouter();
+  const userData = Auth.useContainer();
   const { author, serialSlug } = router.query;
 
   const { data: serialData } = useSWR(
     `
     { 
       serial(authorUsername: "${author}", serialSlug: "${serialSlug}"){
+        _id
         title
         synopsis
         genre{
           name
         }
+        author{
+          _id
+          username
+        }
+      }
+    }
+  `,
+    fetcher
+  );
+
+  const { data: serialPartData } = useSWR(
+    () =>
+      `
+    { 
+      serialParts(parentSerial: "${serialData.serial._id}"){
+        title
+        synopsis
         author{
           username
         }
@@ -36,7 +56,7 @@ export default function SerialOverview() {
   `,
     fetcher
   );
-  if (!serialData) return <div>Loading</div>;
+  if (!serialData || !serialPartData) return <div>Loading</div>;
   return (
     <Fragment>
       <header className="p-4">
@@ -51,17 +71,32 @@ export default function SerialOverview() {
         </div>
         <p>{serialData.serial.synopsis}</p>
       </header>
-      {/* <div id="serial-parts" className="m-4">
-        {serialPartsData.serialParts.map((serialPart) => {
+      <Fragment>
+        {userData.user?._id === serialData.serial.author._id && (
+          <Link
+            href={`/serials/[author]/[serialSlug]/new`}
+            as={`/serials/${userData.user.username}/${serialSlug}/new`}
+          >
+            <a>New Part</a>
+          </Link>
+        )}
+      </Fragment>
+      <div id="serial-parts" className="m-4">
+        {serialPartData.serialParts.map((serialPart) => {
           return (
-            <SerialPartBrief
-              item={serialPart}
-              showSynopsis={false}
-              author={serialPartsData.user}
-            />
+            <div>
+              <p>{serialPart.title}</p>
+              <p>{serialPart.synopis}</p>
+              <Link
+                href={`/serials/[author]/[serialSlug]/[serialPartSlug]`}
+                as={`/serials/${userData.user.username}/${serialSlug}/`}
+              >
+                <a>New Part</a>
+              </Link>
+            </div>
           );
         })}
-      </div> */}
+      </div>
     </Fragment>
   );
 }

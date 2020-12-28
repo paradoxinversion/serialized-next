@@ -1,5 +1,6 @@
 import { User } from "../models";
 import { connectToDatabase } from "../utils/mongodb";
+import bcrypt from "bcryptjs";
 
 export const logIn = async ({ username, password }) => {
   try {
@@ -14,6 +15,33 @@ export const logIn = async ({ username, password }) => {
     }
 
     return { result: 1, user, error: null };
+  } catch (e) {
+    return { result: 0, error: e.message, user: null };
+  }
+};
+
+export const register = async ({ username, password, birthdate, email }) => {
+  try {
+    await connectToDatabase();
+    const existingUser = await User.findOne({ username });
+    console.log("EU", existingUser);
+    if (existingUser) {
+      throw new Error("Username unavailable.");
+    }
+    const hashedPassword = await bcrypt.hash(
+      password,
+      parseInt(process.env.SALT)
+    );
+    const user = new User({
+      username,
+      password: hashedPassword,
+      birthDate: birthdate,
+      email,
+    });
+
+    await user.save();
+
+    return { result: 1, user: user, error: null };
   } catch (e) {
     return { result: 0, error: e.message, user: null };
   }
