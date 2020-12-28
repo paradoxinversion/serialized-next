@@ -69,7 +69,9 @@ export const deleteSerialPart = async (serialPartId) => {
 export const deleteAllSerialParts = async (parentSerialId) => {
   try {
     await connectToDatabase();
-    const deletion = await SerialPart.deleteMany({ author: parentSerialId });
+    const deletion = await SerialPart.deleteMany({
+      parentSerial: parentSerialId,
+    });
     return deletion;
   } catch (e) {
     throw e;
