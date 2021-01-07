@@ -5,8 +5,10 @@ import fetcher from "../../utils/fetcher";
 export default function UserProfile() {
   const router = useRouter();
   const { username } = router.query;
+  console.log(username);
   const { data: profileUserData } = useSWR(
-    `
+    () =>
+      `
     { 
       user(username: "${username}"){
         username
@@ -18,9 +20,10 @@ export default function UserProfile() {
     fetcher
   );
 
-  if (!profileUserData) return <div>Loading</div>;
+  if (!profileUserData?.user) return <div>Loading</div>;
+  // if (!profileUserData.user === null) return <div>Loading</div>;
   return (
-    <div id="user-profile">
+    <div id="user-profile" className="m-2 w-full">
       <h1>{profileUserData.user.username}</h1>
       <p>
         {profileUserData.user.biography ||

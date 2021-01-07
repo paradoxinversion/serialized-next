@@ -5,13 +5,35 @@
 a {
   @apply underline;
 }
+h1 {
+  @apply text-3xl;
+}
 
+h2 {
+  @apply text-xl;
+}
 .btn {
   @apply border p-2 rounded;
 }
 
 .btn-primary {
   @apply bg-green-600 text-green-100;
+}
+
+.form {
+  @apply flex flex-col;
+}
+
+.error {
+  @apply text-red-600 text-sm;
+}
+
+.field {
+  @apply border;
+}
+
+.sidebar-icon {
+  @apply w-8 py-2;
 }
 
 @tailwind utilities;

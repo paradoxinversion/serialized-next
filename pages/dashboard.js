@@ -41,16 +41,21 @@ export default function Dashboard() {
       </Link>
     );
   return (
-    <div id="dashboard" className="m-4">
+    <div id="dashboard" className="m-4 w-full">
       <p className="text-center mb-4">
         Welcome to the dashboard, {UserData.user.username}
       </p>
-      <Link href={`/users/[username]`} as={`/users/${UserData.user.username}`}>
-        <a>My Profile</a>
-      </Link>
-      <Link href={`/dashboard/create-serial`}>
-        <a>New Serial</a>
-      </Link>
+      <div className="flex justify-evenly mb-4">
+        <Link
+          href={`/users/[username]`}
+          as={`/users/${UserData.user.username}`}
+        >
+          <a>My Profile</a>
+        </Link>
+        <Link href={`/dashboard/create-serial`}>
+          <a>New Serial</a>
+        </Link>
+      </div>
       <div id="your-serials">
         <p
           className="bg-gray-500 hover:bg-red-400"
@@ -74,7 +79,7 @@ export default function Dashboard() {
                     href={"/dashboard/serial/[serialId]"}
                     as={`/dashboard/serial/${serial._id}`}
                   >
-                    Go
+                    Manage Serial
                   </Link>
                   <Link
                     className="btn"

@@ -53,3 +53,18 @@ export const registerUser = async ({ username, password, birthdate }) => {
     throw e;
   }
 };
+
+export const updateUserProfile = async ({ id, biography, viewNSFW }) => {
+  try {
+    connectToDatabase();
+    const user = await User.findByIdAndUpdate(
+      id,
+      { biography, viewNSFW },
+      { omitUndefined: true, new: true }
+    ).select("-password");
+
+    return user;
+  } catch (e) {
+    throw e;
+  }
+};

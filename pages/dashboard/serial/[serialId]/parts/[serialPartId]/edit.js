@@ -29,7 +29,8 @@ export default function SerialPartEdit() {
   if (!serialPartData) return <div>Loading</div>;
   const { title, synopsis, content } = serialPartData.serialPartById;
   return (
-    <Fragment>
+    <div className="m-2 w-full">
+      <h1>Edit Serial Part</h1>
       <Formik
         initialValues={{
           title,
@@ -58,23 +59,23 @@ export default function SerialPartEdit() {
         }}
       >
         {({ isSubmitting }) => (
-          <Form>
+          <Form className="form">
             <label className="block">Title</label>
             <Field className="border rounded" type="text" name="title" />
             <ErrorMessage name="title" component="div" />
             <label className="block">Synopsis</label>
             <Field className="border rounded" type="text" name="synopsis" />
             <ErrorMessage name="synopsis" component="div" />
-            <label className="block">Synopsis</label>
+            <label className="block">Content</label>
             <Field className="border rounded" as="textarea" name="content" />
             <ErrorMessage name="content" component="div" />
 
-            <button type="submit" disabled={isSubmitting}>
+            <button type="submit" className="btn" disabled={isSubmitting}>
               Submit
             </button>
           </Form>
         )}
       </Formik>
-    </Fragment>
+    </div>
   );
 }

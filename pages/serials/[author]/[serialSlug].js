@@ -17,6 +17,7 @@ export default function SerialOverview() {
         _id
         title
         synopsis
+        slug
         genre{
           name
         }
@@ -37,6 +38,7 @@ export default function SerialOverview() {
       serialParts(parentSerial: "${serialData.serial._id}"){
         title
         synopsis
+        slug
         author{
           username
         }
@@ -47,10 +49,10 @@ export default function SerialOverview() {
   );
   if (!serialData || !serialPartData) return <div>Loading</div>;
   return (
-    <Fragment>
-      <header className="p-4">
-        <div className="mb-4">
-          <p>{serialData.serial.title}</p>
+    <div className="m-2 w-full">
+      <header>
+        <div>
+          <h1>{serialData.serial.title}</h1>
           <Link
             href={`/users/[username]`}
             as={`/users/${serialData.serial.author.username}`}
@@ -63,14 +65,14 @@ export default function SerialOverview() {
       <Fragment>
         {userData.user?._id === serialData.serial.author._id && (
           <Link
-            href={`/serials/[author]/[serialSlug]/new`}
-            as={`/serials/${userData.user.username}/${serialSlug}/new`}
+            href={`/dashboard/serial/[serialId]/edit`}
+            as={`/dashboard/serial/${serialData.serial._id}/edit`}
           >
-            <a>New Part</a>
+            <a>Edit Serial</a>
           </Link>
         )}
       </Fragment>
-      <div id="serial-parts" className="m-4">
+      <div id="serial-parts">
         {serialPartData.serialParts.map((serialPart) => {
           return (
             <div>
@@ -78,14 +80,14 @@ export default function SerialOverview() {
               <p>{serialPart.synopis}</p>
               <Link
                 href={`/serials/[author]/[serialSlug]/[serialPartSlug]`}
-                as={`/serials/${userData.user.username}/${serialSlug}/`}
+                as={`/serials/${serialData.serial.author.username}/${serialData.serial.slug}/${serialPart.slug}`}
               >
-                <a>New Part</a>
+                <a>Read</a>
               </Link>
             </div>
           );
         })}
       </div>
-    </Fragment>
+    </div>
   );
 }

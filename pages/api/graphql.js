@@ -10,7 +10,12 @@ import {
   deleteSerial,
   getSerialById,
 } from "../../actions/serial";
-import { getUsers, returnUser, getUserByUsername } from "../../actions/user";
+import {
+  getUsers,
+  returnUser,
+  getUserByUsername,
+  updateUserProfile,
+} from "../../actions/user";
 import jwt from "jsonwebtoken";
 import Cookies from "cookies";
 import { logIn, register } from "../../actions/authentication";
@@ -21,6 +26,7 @@ import {
   getSerialParts,
   updateSerialPart,
   deleteSerialPart as removeSerialPart,
+  getSerialPartBySearch,
 } from "../../actions/serialPart";
 import { Serial, SerialPart } from "../../models";
 const typeDefs = gql`
@@ -34,6 +40,11 @@ const typeDefs = gql`
     serialById(serialId: String!): Serial
     serialParts(parentSerial: String!): [SerialPart]
     serialPartById(serialPartId: String!): SerialPart
+    serialPartSearch(
+      authorUsername: String!
+      parentSerialSlug: String!
+      serialPartSlug: String!
+    ): SerialPart
     authorized: User
     ownSerials: [Serial]
     genres: [Genre]
@@ -47,6 +58,7 @@ const typeDefs = gql`
       email: String!
       birthdate: Date!
     ): RegisterResult
+    updateUserProfile(biography: String, viewNSFW: Boolean): User
     createSerial(
       title: String!
       synopsis: String
@@ -200,6 +212,17 @@ const resolvers = {
     async serialPartById(parent, { serialPartId }, context) {
       return await getSerialPartById(serialPartId);
     },
+    async serialPartSearch(
+      parent,
+      { authorUsername, parentSerialSlug, serialPartSlug },
+      context
+    ) {
+      return await getSerialPartBySearch({
+        authorUsername,
+        parentSerialSlug,
+        serialPartSlug,
+      });
+    },
     async genres(parent, args, context) {
       return await getGenres();
     },
@@ -248,6 +271,15 @@ const resolvers = {
         return { user: null, error: loggedInUser.error };
       }
     },
+    async updateUserProfile(parent, { biography, viewNSFW }, context) {
+      const userId = context.user.id;
+      const update = await updateUserProfile({
+        id: userId,
+        biography,
+        viewNSFW,
+      });
+      return update;
+    },
     async createSerial(parent, { title, synopsis, genre, nsfw }, context) {
       // const loggedInUser = await User.findById(context.user)
       return await createSerial({
@@ -292,7 +324,6 @@ const resolvers = {
           const userIsAuthor = serial.isAuthor(userId);
           if (userIsAuthor) {
             const deletion = await deleteSerial(serialId);
-            console.log("del::", deletion);
             return {
               deletedSerial: deletion,
               error: null,

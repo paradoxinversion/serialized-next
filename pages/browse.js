@@ -23,7 +23,7 @@ function Browse() {
   );
 
   return (
-    <Fragment>
+    <div id="browse-directory" className="w-full">
       <p className="text-lg font-bold m-4">Browse</p>
       {data && (
         <div id="serials">
@@ -32,7 +32,7 @@ function Browse() {
           ))}
         </div>
       )}
-    </Fragment>
+    </div>
   );
 }
 

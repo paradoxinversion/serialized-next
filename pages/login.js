@@ -1,15 +1,21 @@
-import { Formik, Field, Form } from "formik";
+import { Formik, Field, Form, ErrorMessage } from "formik";
 import { useRouter } from "next/router";
 import axios from "axios";
 import Auth from "../hooks/containers/useAuthentication";
+import * as yup from "yup";
 
+const loginSchema = yup.object().shape({
+  username: yup.string().required(),
+  password: yup.string().required(),
+});
 export default function LogIn() {
   const router = useRouter();
   const UserData = Auth.useContainer();
   return (
-    <div>
+    <div className="m-2 w-full">
       <h1>Log In</h1>
       <Formik
+        validationSchema={loginSchema}
         initialValues={{
           username: "",
           password: "",
@@ -48,13 +54,22 @@ export default function LogIn() {
           router.push("/dashboard");
         }}
       >
-        <Form>
+        <Form className="form">
           <label htmlFor="username">Username</label>
-          <Field id="username" name="username" />
-
+          <Field id="username" name="username" className="field" />
+          <ErrorMessage name="username" component="div" className="error" />
           <label htmlFor="password">Password</label>
-          <Field id="password" name="password" type="password" />
-          <button type="submit">Submit</button>
+          <Field
+            id="password"
+            name="password"
+            type="password"
+            className="field"
+          />
+          <ErrorMessage name="username" component="div" className="error" />
+
+          <button type="submit" className="btn">
+            Submit
+          </button>
         </Form>
       </Formik>
     </div>

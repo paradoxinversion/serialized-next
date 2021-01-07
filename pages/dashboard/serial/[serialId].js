@@ -50,29 +50,31 @@ export default function AuthorSerialOverview() {
   );
   if (!serialData || !serialPartData) return <div>Loading</div>;
   return (
-    <Fragment>
-      <header className="p-4">
-        <div className="mb-4">
-          <p>{serialData.serialById.title}</p>
+    <div className="m-4 w-full">
+      <header className="mb-4">
+        <div>
+          <h1>{serialData.serialById.title}</h1>
         </div>
-        <p>
-          Synopsis
-          <br />
-          {serialData.serialById.synopsis}
-        </p>
+        <p>{serialData.serialById.synopsis}</p>
+        <div className="flex justify-evenly border py-2 mt-4">
+          <Link
+            href={`/dashboard/serial/[serialId]/parts/new`}
+            as={`/dashboard/serial/${serialId}/parts/new`}
+          >
+            <a>New Part</a>
+          </Link>
+          <Link
+            href={`/dashboard/serial/[serialId]/edit`}
+            as={`/dashboard/serial/${serialId}/edit`}
+          >
+            <a>Edit Serial</a>
+          </Link>
+        </div>
       </header>
-      <Fragment>
-        <Link
-          href={`/dashboard/serial/[serialId]/parts/new`}
-          as={`/dashboard/serial/${serialId}/parts/new`}
-        >
-          <a>New Part</a>
-        </Link>
-      </Fragment>
-      <div id="serial-parts" className="m-4">
+      <div id="serial-parts">
         {serialPartData.serialParts.map((serialPart) => {
           return (
-            <div>
+            <div className="border p-2">
               <p>{serialPart.title}</p>
               <p>{serialPart.synopis}</p>
               <Link
@@ -86,6 +88,6 @@ export default function AuthorSerialOverview() {
           );
         })}
       </div>
-    </Fragment>
+    </div>
   );
 }

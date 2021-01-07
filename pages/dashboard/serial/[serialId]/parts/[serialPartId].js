@@ -28,61 +28,59 @@ export default function AuthorSerialPartOverview() {
     fetcher
   );
 
-  if (!serialPartData) return <div>Loading</div>;
+  if (!serialPartData?.serialPartById) return <div>Loading</div>;
   const { title, partNumber, synopsis } = serialPartData.serialPartById;
   return (
-    <Fragment>
-      <header className="p-4">
-        <div className="mb-4">
-          <p>{serialPartData.serialPartById.title}</p>
-          <p>Part {serialPartData.serialPartById.partNumber}</p>
-        </div>
-        <p>
-          Synopsis
-          <br />
-          {serialPartData.serialPartById.synopsis}
-        </p>
-        <Link
-          href={`/dashboard/serial/[serialId]`}
-          as={`/dashboard/serial/${serialId}`}
-        >
-          <a>Back to Serial</a>
-        </Link>
-        <Link
-          href={`/dashboard/serial/[serialId]/parts/[serialPartId]/edit`}
-          as={`/dashboard/serial/${serialId}/parts/${serialPartId}/edit`}
-        >
-          <a>Edit</a>
-        </Link>
-        <button
-          onClick={async () => {
-            if (
-              window.confirm(`You are about to delete ${title}. Are you sure?`)
-            ) {
-              const result = await axios.post("/api/graphql", {
-                query: `mutation($serialPartId: String!){
+    <div className="m-2 w-full">
+      <header className="mb-4">
+        <h1>{serialPartData.serialPartById.title}</h1>
+        <p>Part {serialPartData.serialPartById.partNumber}</p>
+        <p>{serialPartData.serialPartById.synopsis}</p>
+        <div className="flex justify-evenly border py-2 mt-4">
+          <Link
+            href={`/dashboard/serial/[serialId]`}
+            as={`/dashboard/serial/${serialId}`}
+          >
+            <a>Back to Serial</a>
+          </Link>
+          <Link
+            href={`/dashboard/serial/[serialId]/parts/[serialPartId]/edit`}
+            as={`/dashboard/serial/${serialId}/parts/${serialPartId}/edit`}
+          >
+            <a>Edit</a>
+          </Link>
+          <button
+            onClick={async () => {
+              if (
+                window.confirm(
+                  `You are about to delete ${title}. Are you sure?`
+                )
+              ) {
+                const result = await axios.post("/api/graphql", {
+                  query: `mutation($serialPartId: String!){
                   deleteSerialPart(serialPartId: $serialPartId){
                     resourceName
                     error
                   }
                 }
                 `,
-                variables: {
-                  serialPartId,
-                },
-              });
-              console.log(result);
+                  variables: {
+                    serialPartId,
+                  },
+                });
+                console.log(result);
 
-              router.push(`/dashboard/serial/${serialId}`);
-            }
-          }}
-        >
-          Delete
-        </button>
+                router.push(`/dashboard/serial/${serialId}`);
+              }
+            }}
+          >
+            Delete
+          </button>
+        </div>
       </header>
       <div>
         <p>{serialPartData.serialPartById.content}</p>
       </div>
-    </Fragment>
+    </div>
   );
 }

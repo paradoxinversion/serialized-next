@@ -5,7 +5,7 @@ import { Fragment } from "react";
 
 export default function HomePage() {
   return (
-    <Fragment>
+    <div>
       <img className="object-cover" src="https://picsum.photos/800/300" />
       <div className="m-4 text-center">
         <p className="text-lg font-bold">Lorem Ipsum</p>
@@ -26,6 +26,6 @@ export default function HomePage() {
           </Link>
         </div>
       </div>
-    </Fragment>
+    </div>
   );
 }

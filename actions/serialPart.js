@@ -1,6 +1,31 @@
 import { kebabCase } from "lodash";
-import { SerialPart, User } from "../models";
+import { SerialPart, Serial, User } from "../models";
 import { connectToDatabase } from "../utils/mongodb";
+
+export const getSerialPartBySearch = async ({
+  authorUsername,
+  parentSerialSlug,
+  serialPartSlug,
+}) => {
+  try {
+    await connectToDatabase();
+    const author = await User.findOne({ username: authorUsername });
+    const serial = await Serial.findOne({
+      author: author._id,
+      slug: parentSerialSlug,
+    });
+    const serialPart = await SerialPart.findOne({
+      parentSerial: serial._id,
+      slug: serialPartSlug,
+    })
+      .populate("author", "username")
+      .lean();
+
+    return serialPart;
+  } catch (e) {
+    throw e;
+  }
+};
 
 export const getSerialParts = async (parentSerialId) => {
   try {

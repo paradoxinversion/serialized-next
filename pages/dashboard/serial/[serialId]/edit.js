@@ -1,5 +1,4 @@
 import { useRouter } from "next/router";
-import { Fragment } from "react";
 import useSWR from "swr";
 import { Form, Formik, Field, ErrorMessage } from "formik";
 import GenericSelect from "../../../../components/customFields/Select";
@@ -44,7 +43,8 @@ export default function SerialEdit() {
   );
   if (!serialData || !genreData) return <div>Loading</div>;
   return (
-    <Fragment>
+    <div className="m-2 w-full">
+      <h1>Edit Serial Information</h1>
       <Formik
         initialValues={{
           title: serialData.serialById.title,
@@ -76,29 +76,32 @@ export default function SerialEdit() {
         }}
       >
         {({ isSubmitting }) => (
-          <Form>
+          <Form className="form">
             <label className="block">Title</label>
-            <Field className="border rounded" type="text" name="title" />
+            <Field className="field" type="text" name="title" />
             <ErrorMessage name="title" component="div" />
             <label className="block">Synopsis</label>
-            <Field className="border rounded" type="text" name="synopsis" />
+            <Field className="field" type="text" name="synopsis" />
             <ErrorMessage name="synopsis" component="div" />
             <GenericSelect
               name="genre"
               label="Genre"
               options={genreData.genres}
+              className="field"
             />
             <ErrorMessage name="genre" component="div" />
-            <label className="block">NSFW</label>
-            <Field className="border rounded" type="checkbox" name="nsfw" />
-            <ErrorMessage name="nsfw" component="div" />
+            <label className="inline">NSFW</label>
+            <div className="flex">
+              <Field className="field inline" type="checkbox" name="nsfw" />
+              <ErrorMessage name="nsfw" component="div" />
+            </div>
 
-            <button type="submit" disabled={isSubmitting}>
+            <button type="submit" className="btn" disabled={isSubmitting}>
               Submit
             </button>
           </Form>
         )}
       </Formik>
-    </Fragment>
+    </div>
   );
 }
